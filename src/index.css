@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-white text-slate-800 antialiased; }
+  a { @apply text-acad-500 font-medium; }
+}
+
+/* Small theme helpers */
+.brand { @apply text-acad-700 font-semibold; }
+.card { @apply bg-white shadow-sm rounded-lg p-4 border border-gray-100; }
+.sidebar { @apply bg-slate-50 border-r border-slate-100 h-screen p-4 w-60; }
+
