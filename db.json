@@ -1,18 +1,111 @@
 {
   "users": [
-    { "id": 1, "name": "BOMMA NAGA VENKATA SAI PARDHA SARADHI", "email": "alice@example.com", "password": "password123" },
-    { "id": 2, "name": "KOKKILIGADDA VENKATA RAMA RAJU", "email": "bob@example.com", "password": "password123" },
-    { "id": 3, "name": "CHOLLANGI PARDHU SWAROOP", "email": "charlie@example.com", "password": "password123" }
+    {
+      "id": "1",
+      "name": "BOMMA NAGA VENKATA SAI PARDHA SARADHI",
+      "email": "alice@example.com",
+      "password": "password123"
+    },
+    {
+      "id": "2",
+      "name": "KOKKILIGADDA VENKATA RAMA RAJU",
+      "email": "bob@example.com",
+      "password": "password123"
+    },
+    {
+      "id": "3",
+      "name": "CHOLLANGI PARDHU SWAROOP",
+      "email": "pardhuswaroop.ch@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "4",
+      "name": "Pardhu Swaroop",
+      "email": "pardhuswaroop.ch123@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "a72a",
+      "email": "temp.test@example.com",
+      "name": "tempTest",
+      "password": "pass123"
+    },
+    {
+      "id": "8e7d",
+      "name": "hari",
+      "email": "hari@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "fd06",
+      "name": "pardhu",
+      "email": "pardhuswaroop.ch123@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "e822",
+      "name": "pardhu",
+      "email": "pardhuswaroop.ch123@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "6be5",
+      "name": "pardhu",
+      "email": "pardhuswaroop.ch123@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "575c",
+      "name": "pardhu",
+      "email": "pardhuswaroop.ch123@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "7f87",
+      "name": "hari",
+      "email": "hari@gmail.com",
+      "password": "123456"
+    }
   ],
   "projects": [
-    { "id": 1, "title": "Quantum Materials", "shortDescription": "Study of 2D superconductors", "status": "Ongoing", "description": "In-depth study of layered superconducting materials." },
-    { "id": 2, "title": "AI for Biology", "shortDescription": "ML models for genomics", "status": "Completed", "description": "Apply ML to genomic datasets." }
+    {
+      "id": "1",
+      "title": "Quantum Materials",
+      "shortDescription": "Study of 2D superconductors",
+      "status": "Ongoing",
+      "description": "In-depth study of layered superconducting materials."
+    },
+    {
+      "id": "2",
+      "title": "AI for Biology",
+      "shortDescription": "ML models for genomics",
+      "status": "Completed",
+      "description": "Apply ML to genomic datasets."
+    }
   ],
   "documents": [
-    { "id": 1, "projectId": 1, "name": "proposal.pdf", "size": 23456, "date": "2026-02-01T10:00:00Z" },
-    { "id": 2, "projectId": 2, "name": "dataset.csv", "size": 123456, "date": "2026-01-15T12:00:00Z" }
+    {
+      "id": "1",
+      "projectId": 1,
+      "name": "proposal.pdf",
+      "size": 23456,
+      "date": "2026-02-01T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "projectId": 2,
+      "name": "dataset.csv",
+      "size": 123456,
+      "date": "2026-01-15T12:00:00Z"
+    }
   ],
   "messages": [
-    { "id": 1, "projectId": 1, "sender": "alice", "text": "Hi team, next meeting Monday.", "date": "2026-02-10T09:00:00Z" }
+    {
+      "id": "1",
+      "projectId": 1,
+      "sender": "alice",
+      "text": "Hi team, next meeting Monday.",
+      "date": "2026-02-10T09:00:00Z"
+    }
   ]
 }

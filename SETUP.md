@@ -145,7 +145,7 @@ Password: password123
 
 Additional test users in `db.json`:
 - `bob@example.com` / `password123`
-- `charlie@example.com` / `password123`
+- `pardhuswaroop.ch@gmail.com` / `123456`
 
 ## API Endpoints
 

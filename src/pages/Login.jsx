@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react'
 import AuthContext from '../context/AuthContext'
+import { Link } from 'react-router-dom'
 import api from '../services/api'
+import { validateEmail } from '../utils/validation'
 
 export default function Login() {
   const { login } = useContext(AuthContext)
@@ -12,21 +14,38 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    if (!email || !password) {
+    const emailNorm = String(email || '').trim().toLowerCase()
+    const passwordTrim = String(password || '').trim()
+    if (!emailNorm || !passwordTrim) {
       setError('Please fill all fields')
+      return
+    }
+    if (!validateEmail(emailNorm)) {
+      setError('Please enter a valid email address')
+      return
+    }
+    if (passwordTrim.length < 6) {
+      setError('Password must be at least 6 characters')
       return
     }
     setLoading(true)
     try{
-      const res = await api.get(`/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`)
-      if (res.data && res.data.length > 0) {
-        const user = res.data[0]
-        const token = `mock-token-${user.id}`
-        login({ id: user.id, name: user.name, email: user.email }, token)
+      // Query all users and perform client-side case-insensitive email match
+      // and exact password comparison. This avoids relying on JSON Server
+      // query matching quirks for complex email strings.
+      console.debug('[login] fetching all users for client-side match')
+      const allRes = await api.get('/users')
+      console.debug('[login] /users returned count', (allRes.data || []).length)
+      const found = (allRes.data || []).find(u => u.email && String(u.email).trim().toLowerCase() === emailNorm)
+      console.debug('[login] found after client filter:', found)
+      if (found && String(found.password) === passwordTrim) {
+        const token = `mock-token-${found.id}`
+        login({ id: found.id, name: found.name, email: found.email }, token)
       } else {
         setError('Invalid email or password')
       }
     }catch(err){
+      console.error('[login] error', err)
       setError('Login failed')
     }finally{
       setLoading(false)
@@ -47,8 +66,16 @@ export default function Login() {
             <label className="block text-sm mb-1">Password</label>
             <input type="password" className="w-full border border-gray-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-acad-50" value={password} onChange={(e)=>setPassword(e.target.value)} />
           </div>
-          <button className="px-4 py-2 bg-acad-500 text-white rounded inline-flex items-center" disabled={loading}>{loading ? 'Signing in...' : 'Login'}</button>
+          <button className="px-4 py-2 bg-acad-500 text-white rounded inline-flex items-center" disabled={loading || !validateEmail((email||'').trim()) || (String(password||'').trim().length < 6)}>{loading ? 'Signing in...' : 'Login'}</button>
         </form>
+        <div className="mt-3 text-sm flex justify-between">
+          <div>
+            Don't have an account? <Link to="/register" className="text-acad-500 font-medium">Sign Up</Link>
+          </div>
+          <div>
+            <Link to="/forgot-password" className="text-acad-500">Forgot Password?</Link>
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -17,8 +17,8 @@ npm run mock:server
 ```
 
 Visit `http://localhost:5173/` and login with:
-- Email: `alice@example.com`
-- Password: `password123`
+- Email: `pardhuswaroop.ch@gmail.com`
+- Password: `123456`
 
 ### Production Build
 
@@ -85,8 +85,8 @@ See [DEPLOY.md](DEPLOY.md) for detailed guides for each platform.
 ## 🔑 Test Credentials
 
 ```
-Email:    alice@example.com
-Password: password123
+Email:    pardhuswaroop.ch@gmail.com
+Password: 123456
 ```
 
 ## ⚙️ API Endpoints

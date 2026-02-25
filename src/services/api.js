@@ -3,23 +3,48 @@ import axios from 'axios'
 // Get API URL from environment or default to localhost
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 
-const api = axios.create({ baseURL })
+const api = axios.create({ baseURL, timeout: 10000 })
 
 // Attach token if present (mock token stored in localStorage by AuthContext)
-api.interceptors.request.use((config) => {
-  try {
-    const token = localStorage.getItem('token')
-    if (token) config.headers = { ...(config.headers || {}), Authorization: `Bearer ${token}` }
-  } catch (err) {
-    // ignore
+api.interceptors.request.use(
+  (config) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (token) config.headers = { ...(config.headers || {}), Authorization: `Bearer ${token}` }
+    } catch (err) {
+      // ignore
+    }
+    // log request details for debugging
+    try {
+      const safeData = config.data ? config.data : undefined
+      console.debug('[api] request:', { method: config.method, url: `${config.baseURL || ''}${config.url}`, data: safeData })
+    } catch (e) {}
+    return config
+  },
+  (err) => {
+    console.error('[api] request error:', err && err.message ? err.message : err)
+    return Promise.reject(err)
   }
-  return config
-})
+)
 
-// Global response handler: if mock backend returns 401, clear auth and redirect to login
+// Global response handler: log responses and handle 401s (clear auth + redirect)
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    try {
+      console.debug('[api] response:', { url: `${res.config?.baseURL || ''}${res.config?.url}`, status: res.status, data: res.data })
+    } catch (e) {}
+    return res
+  },
   (error) => {
+    try {
+      console.error('[api] response error:', {
+        message: error.message,
+        url: error.config ? `${error.config.baseURL || ''}${error.config.url}` : undefined,
+        status: error.response && error.response.status,
+        data: error.response && error.response.data,
+      })
+    } catch (e) {}
+
     if (error.response && error.response.status === 401) {
       try {
         localStorage.removeItem('token')

@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react'
+import { Link } from 'react-router-dom'
 import AuthContext from '../context/AuthContext'
-import api from '../services/api'
+import { validateEmail, passwordFeedback, isPasswordStrong } from '../utils/validation'
 
-export default function Register() {
-  const { login } = useContext(AuthContext)
+export default function Register(){
+  const { register } = useContext(AuthContext)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,31 +14,37 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    if (!name || !email || !password) {
+    const nameTrim = String(name || '').trim()
+    const emailNorm = String(email || '').trim().toLowerCase()
+    const passwordTrim = String(password || '').trim()
+    if (!nameTrim || !emailNorm || !passwordTrim) {
       setError('Please fill all fields')
+      return
+    }
+    if (!validateEmail(emailNorm)) {
+      setError('Please enter a valid email')
+      return
+    }
+    const pwFeedback = passwordFeedback(passwordTrim)
+    if (pwFeedback) {
+      setError(pwFeedback)
       return
     }
     setLoading(true)
     try{
-      const exists = await api.get(`/users?email=${encodeURIComponent(email)}`)
-      if (exists.data && exists.data.length > 0) {
-        setError('User already exists')
-        setLoading(false)
-        return
-      }
-      const res = await api.post('/users', { name, email, password })
-      const user = res.data
-      const token = `mock-token-${user.id}`
-      login({ id: user.id, name: user.name, email: user.email }, token)
+      await register({ name: nameTrim, email: emailNorm, password: passwordTrim })
+      // register will auto-login and navigate
     }catch(err){
-      setError('Registration failed')
-    }finally{ setLoading(false) }
+      setError(err?.message || 'Registration failed')
+    }finally{
+      setLoading(false)
+    }
   }
 
   return (
     <div className="max-w-md mx-auto mt-12">
       <div className="card">
-        <h4 className="mb-3 text-lg font-semibold">Register</h4>
+        <h4 className="mb-3 text-lg font-semibold">Sign Up</h4>
         {error && <div className="text-red-600 mb-2">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
@@ -51,9 +58,15 @@ export default function Register() {
           <div>
             <label className="block text-sm mb-1">Password</label>
             <input type="password" className="w-full border border-gray-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-acad-50" value={password} onChange={(e)=>setPassword(e.target.value)} />
+            <div className="text-xs mt-1">
+              {password ? (isPasswordStrong(password) ? <span className="text-green-600">Looks good</span> : <span className="text-yellow-600">{passwordFeedback(password)}</span>) : <span className="text-gray-500">At least 6 chars and a number</span>}
+            </div>
           </div>
-          <button className="px-4 py-2 bg-acad-500 text-white rounded inline-flex items-center" disabled={loading}>{loading ? 'Creating...' : 'Create account'}</button>
+          <button className="px-4 py-2 bg-acad-500 text-white rounded inline-flex items-center" disabled={loading || !name.trim() || !validateEmail(email) || !isPasswordStrong(password)}>{loading ? 'Creating...' : 'Create Account'}</button>
         </form>
+        <div className="mt-3 text-sm">
+          Already have an account? <Link to="/login" className="text-acad-500">Login</Link>
+        </div>
       </div>
     </div>
   )

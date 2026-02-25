@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../services/api'
 
 export const AuthContext = createContext()
 
@@ -24,6 +25,32 @@ export function AuthProvider({ children }) {
     navigate('/dashboard')
   }
 
+  const register = async ({ name, email, password }) => {
+    // normalize email and check if it exists (case-insensitive)
+    const emailNorm = String(email || '').trim().toLowerCase()
+    const res = await api.get(`/users?email_like=${encodeURIComponent(emailNorm)}`)
+    const exists = (res.data || []).find(u => u.email && u.email.toLowerCase() === emailNorm)
+    if (exists) {
+      throw new Error('Email already registered')
+    }
+    // create user (store normalized email)
+    const createRes = await api.post('/users', { name, email: emailNorm, password })
+    const created = createRes.data
+    const token = `mock-token-${created.id}`
+    login({ id: created.id, name: created.name, email: created.email }, token)
+    return created
+  }
+
+  const requestPasswordReset = async (email) => {
+    const res = await api.get(`/users?email_like=${encodeURIComponent(email)}`)
+    const found = (res.data || []).find(u => u.email && u.email.toLowerCase() === String(email).toLowerCase())
+    if (found) {
+      // mock behaviour: in production you'd send an email
+      return { success: true }
+    }
+    return { success: false }
+  }
+
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -32,7 +59,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, register, requestPasswordReset }}>
       {children}
     </AuthContext.Provider>
   )
