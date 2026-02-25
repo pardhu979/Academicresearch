@@ -45,6 +45,20 @@ api.interceptors.response.use(
       })
     } catch (e) {}
 
+    // Provide better error message to throw
+    if (error.response) {
+      // Server responded with error status
+      error.message = error.response.data?.error || error.response.statusText || 'Server error'
+    } else if (error.request) {
+      // Request made but no response
+      error.message = 'Network error: No response from server. Is the backend running on http://localhost:4000?'
+    } else if (error.code === 'ECONNREFUSED') {
+      error.message = 'Cannot connect to server. Make sure backend is running: npm run mock:server'
+    } else {
+      // Error in request setup
+      error.message = error.message || 'Request failed'
+    }
+
     if (error.response && error.response.status === 401) {
       try {
         localStorage.removeItem('token')

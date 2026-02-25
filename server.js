@@ -42,27 +42,67 @@ app.use((req, res, next) => {
 
 // Simple file-based routing for mock data
 app.get('/users', (req, res) => {
-  const email = req.query.email
-  const password = req.query.password
-  const db = JSON.parse(fs.readFileSync(resolve(__dirname, 'db.json'), 'utf8'))
-  
-  if (email && password) {
-    const user = db.users.find(u => u.email === email && u.password === password)
-    return res.json(user ? [user] : [])
+  try {
+    const email = req.query.email ? String(req.query.email).trim().toLowerCase() : null
+    const password = req.query.password
+    const db = JSON.parse(fs.readFileSync(resolve(__dirname, 'db.json'), 'utf8'))
+    
+    if (email && password) {
+      const user = db.users.find(u => 
+        u.email?.toLowerCase() === email && u.password === password
+      )
+      return res.json(user ? [user] : [])
+    }
+    if (email) {
+      const users = db.users.filter(u => 
+        u.email?.toLowerCase() === email
+      )
+      return res.json(users)
+    }
+    res.json(db.users)
+  } catch (err) {
+    console.error('[/users GET] Error:', err.message)
+    res.status(500).json({ error: 'Internal server error' })
   }
-  if (email) {
-    const users = db.users.filter(u => u.email === email)
-    return res.json(users)
-  }
-  res.json(db.users)
 })
 
 app.post('/users', (req, res) => {
-  const db = JSON.parse(fs.readFileSync(resolve(__dirname, 'db.json'), 'utf8'))
-  const newUser = { id: Math.max(...db.users.map(u => u.id), 0) + 1, ...req.body }
-  db.users.push(newUser)
-  fs.writeFileSync(resolve(__dirname, 'db.json'), JSON.stringify(db, null, 2))
-  res.status(201).json(newUser)
+  try {
+    const { name, email, password } = req.body
+    
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email, and password are required' })
+    }
+    
+    const emailNorm = String(email).trim().toLowerCase()
+    const db = JSON.parse(fs.readFileSync(resolve(__dirname, 'db.json'), 'utf8'))
+    
+    // Check for duplicate email (case-insensitive)
+    const exists = db.users.find(u => u.email?.toLowerCase() === emailNorm)
+    if (exists) {
+      return res.status(409).json({ error: 'Email already registered' })
+    }
+    
+    // Create user with normalized email
+    const newUser = { 
+      id: Math.max(...db.users.map(u => u.id), 0) + 1, 
+      name: String(name).trim(),
+      email: emailNorm,
+      password: String(password),
+      createdAt: new Date().toISOString()
+    }
+    
+    db.users.push(newUser)
+    fs.writeFileSync(resolve(__dirname, 'db.json'), JSON.stringify(db, null, 2))
+    
+    // Don't send password in response
+    const { password: _, ...userRes } = newUser
+    res.status(201).json(userRes)
+  } catch (err) {
+    console.error('[/users POST] Error:', err.message)
+    res.status(500).json({ error: 'Internal server error' })
+  }
 })
 
 app.get('/projects', (req, res) => {

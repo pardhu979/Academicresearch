@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 import { Link } from 'react-router-dom'
-import api from '../services/api'
 import { validateEmail } from '../utils/validation'
 
 export default function Login() {
@@ -30,14 +29,11 @@ export default function Login() {
     }
     setLoading(true)
     try{
-      // Query all users and perform client-side case-insensitive email match
-      // and exact password comparison. This avoids relying on JSON Server
-      // query matching quirks for complex email strings.
-      console.debug('[login] fetching all users for client-side match')
-      const allRes = await api.get('/users')
-      console.debug('[login] /users returned count', (allRes.data || []).length)
-      const found = (allRes.data || []).find(u => u.email && String(u.email).trim().toLowerCase() === emailNorm)
-      console.debug('[login] found after client filter:', found)
+      // Get users from localStorage (offline mode)
+      const usersJSON = localStorage.getItem('appUsers') || '[]'
+      const users = JSON.parse(usersJSON)
+      const found = users.find(u => u.email && String(u.email).trim().toLowerCase() === emailNorm)
+      
       if (found && String(found.password) === passwordTrim) {
         const token = `mock-token-${found.id}`
         login({ id: found.id, name: found.name, email: found.email }, token)

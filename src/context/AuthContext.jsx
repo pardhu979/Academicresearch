@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
 
 export const AuthContext = createContext()
 
@@ -28,25 +27,54 @@ export function AuthProvider({ children }) {
   const register = async ({ name, email, password }) => {
     // normalize email and check if it exists (case-insensitive)
     const emailNorm = String(email || '').trim().toLowerCase()
-    const res = await api.get(`/users?email_like=${encodeURIComponent(emailNorm)}`)
-    const exists = (res.data || []).find(u => u.email && u.email.toLowerCase() === emailNorm)
-    if (exists) {
-      throw new Error('Email already registered')
+    
+    // Get users from localStorage (offline mode)
+    try {
+      const usersJSON = localStorage.getItem('appUsers') || '[]'
+      const users = JSON.parse(usersJSON)
+      
+      // Check if email already exists
+      const exists = users.find(u => u.email && u.email.toLowerCase() === emailNorm)
+      if (exists) {
+        throw new Error('Email already registered')
+      }
+      
+      // Create new user
+      const newId = Math.max(...users.map(u => u.id || 0), 0) + 1
+      const created = {
+        id: newId,
+        name: String(name).trim(),
+        email: emailNorm,
+        password: String(password).trim(),
+        createdAt: new Date().toISOString()
+      }
+      
+      // Save to localStorage
+      users.push(created)
+      localStorage.setItem('appUsers', JSON.stringify(users))
+      
+      // Login
+      const token = `mock-token-${created.id}`
+      login({ id: created.id, name: created.name, email: created.email }, token)
+      return created
+    } catch (err) {
+      throw new Error(err.message || 'Registration failed')
     }
-    // create user (store normalized email)
-    const createRes = await api.post('/users', { name, email: emailNorm, password })
-    const created = createRes.data
-    const token = `mock-token-${created.id}`
-    login({ id: created.id, name: created.name, email: created.email }, token)
-    return created
   }
 
   const requestPasswordReset = async (email) => {
-    const res = await api.get(`/users?email_like=${encodeURIComponent(email)}`)
-    const found = (res.data || []).find(u => u.email && u.email.toLowerCase() === String(email).toLowerCase())
-    if (found) {
-      // mock behaviour: in production you'd send an email
-      return { success: true }
+    // Check localStorage for user with this email (offline mode)
+    const emailNorm = String(email || '').trim().toLowerCase()
+    try {
+      const usersJSON = localStorage.getItem('appUsers') || '[]'
+      const users = JSON.parse(usersJSON)
+      const found = users.find(u => u.email && u.email.toLowerCase() === emailNorm)
+      if (found) {
+        // mock behaviour: in production you'd send an email
+        return { success: true }
+      }
+    } catch (err) {
+      console.error('Error checking users:', err)
     }
     return { success: false }
   }
