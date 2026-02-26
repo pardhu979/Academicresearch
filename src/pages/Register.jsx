@@ -39,22 +39,15 @@ export default function Register(){
       await register({ name: nameTrim, email: emailNorm, password: passwordTrim, role })
       // register will auto-login and navigate
     }catch(err){
+      // errors are now generated locally; network failures won't occur
       let errorMsg = 'Registration failed'
-      
       if (err.response?.status === 409) {
         errorMsg = 'Email already registered'
       } else if (err.response?.status === 400) {
         errorMsg = err.response.data?.error || 'Invalid input'
-      } else if (err.message?.includes('Network error')) {
-        errorMsg = err.message
-      } else if (err.message?.includes('Cannot connect')) {
-        errorMsg = err.message
-      } else if (err.message?.includes('timeout')) {
-        errorMsg = 'Request timeout. Server is slow to respond.'
       } else {
         errorMsg = err?.response?.data?.error || err?.message || 'Registration failed'
       }
-      
       setError(errorMsg)
       console.error('[Register] Error:', err)
     }finally{

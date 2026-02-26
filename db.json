@@ -89,6 +89,22 @@
       "password": "$2b$10$kVg9JOOg1f9x/tf1l/7v9.SkcZC59q56kd5oiKtMDD8InSihWiRpm",
       "role": "researcher",
       "createdAt": "2026-02-26T16:15:23.857Z"
+    },
+    {
+      "id": 8,
+      "name": "pardhu",
+      "email": "par@gmail.com",
+      "password": "$2b$10$4L6F8uYJ3MUYAOuU7ygToe8Vbn2MEQXMbg1AnV5HDSCFdalSmydMi",
+      "role": "researcher",
+      "createdAt": "2026-02-26T17:09:48.944Z"
+    },
+    {
+      "id": 9,
+      "name": "mffff",
+      "email": "asepa@gmail.com",
+      "password": "$2b$10$rro9pucU8B4j7SytsWQ8vOr5r26Xgy4DwPMjOFc.Y3cMTkKAdJ9ju",
+      "role": "researcher",
+      "createdAt": "2026-02-26T17:48:30.531Z"
     }
   ],
   "projects": [
