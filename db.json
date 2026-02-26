@@ -65,6 +65,30 @@
       "name": "hari",
       "email": "hari@gmail.com",
       "password": "123456"
+    },
+    {
+      "id": 5,
+      "name": "Test User",
+      "email": "test@example.com",
+      "password": "$2b$10$ZXBCwxaX6RY.FGV6zfMbXeHJUlA0Ktvdi6.XtXuQvhGAA/aZUFnh6",
+      "role": "researcher",
+      "createdAt": "2026-02-26T16:08:36.191Z"
+    },
+    {
+      "id": 6,
+      "name": "hari",
+      "email": "ven@gmail.com",
+      "password": "$2b$10$1qhVJYQKOB2NZ.cJu1BSWujhbqD/spZ5.AHq82yJ14WeRzXmmXleO",
+      "role": "researcher",
+      "createdAt": "2026-02-26T16:14:42.797Z"
+    },
+    {
+      "id": 7,
+      "name": "pa",
+      "email": "pa@gmail.com",
+      "password": "$2b$10$kVg9JOOg1f9x/tf1l/7v9.SkcZC59q56kd5oiKtMDD8InSihWiRpm",
+      "role": "researcher",
+      "createdAt": "2026-02-26T16:15:23.857Z"
     }
   ],
   "projects": [

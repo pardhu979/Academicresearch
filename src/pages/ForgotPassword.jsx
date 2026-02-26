@@ -32,6 +32,7 @@ export default function ForgotPassword(){
         setError('Email not found')
       }
     }catch(err){
+      console.error('[ForgotPassword] error', err)
       setError('Request failed')
     }finally{
       setLoading(false)

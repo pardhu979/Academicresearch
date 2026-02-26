@@ -20,6 +20,13 @@ Visit `http://localhost:5173/` and login with:
 - Email: `pardhuswaroop.ch@gmail.com`
 - Password: `123456`
 
+> **Tip:** register a new account and enter `ADMIN123` in the **Admin Code** field to create an administrator. This demo value is evaluated on the front-end and back-end; in production use a proper invitation flow.
+
+You can also exercise the forgot/reset password flow:
+1. Click **Forgot Password** on the login page.
+2. The mock server prints a reset token to its console.
+3. Visit `/reset-password` to enter the token and a new password.
+
 ### Production Build
 
 ```bash
@@ -112,7 +119,18 @@ Password: 123456
 ✅ PrivateRoute components
 ✅ Session persistence in localStorage
 
-## 📦 Scripts
+## � Authentication & Roles
+
+The platform supports two roles:
+
+- `researcher` (default) — normal users who can view projects, upload documents, and chat.
+- `admin` — has access to the admin dashboard, can manage projects and researchers.
+
+Role is encoded in the JWT and stored in `localStorage` along with the token. Protected routes use a custom `<PrivateRoute role="..." />` component. API endpoints enforce permissions via middleware.
+
+Passwords are hashed with **bcrypt** and tokens expire after two hours. The backend is file‑based (`db.json`) but can be swapped for a real database easily.
+
+## �📦 Scripts
 
 ```bash
 npm run dev           # Start dev server

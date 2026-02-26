@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../services/api'
 
 export const AuthContext = createContext()
 
@@ -21,62 +22,24 @@ export function AuthProvider({ children }) {
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(userData))
     setUser(userData)
-    navigate('/dashboard')
+    // route based on role
+    if (userData.role === 'admin') {
+      navigate('/admin')
+    } else {
+      navigate('/dashboard')
+    }
   }
 
-  const register = async ({ name, email, password }) => {
-    // normalize email and check if it exists (case-insensitive)
-    const emailNorm = String(email || '').trim().toLowerCase()
-    
-    // Get users from localStorage (offline mode)
-    try {
-      const usersJSON = localStorage.getItem('appUsers') || '[]'
-      const users = JSON.parse(usersJSON)
-      
-      // Check if email already exists
-      const exists = users.find(u => u.email && u.email.toLowerCase() === emailNorm)
-      if (exists) {
-        throw new Error('Email already registered')
-      }
-      
-      // Create new user
-      const newId = Math.max(...users.map(u => u.id || 0), 0) + 1
-      const created = {
-        id: newId,
-        name: String(name).trim(),
-        email: emailNorm,
-        password: String(password).trim(),
-        createdAt: new Date().toISOString()
-      }
-      
-      // Save to localStorage
-      users.push(created)
-      localStorage.setItem('appUsers', JSON.stringify(users))
-      
-      // Login
-      const token = `mock-token-${created.id}`
-      login({ id: created.id, name: created.name, email: created.email }, token)
-      return created
-    } catch (err) {
-      throw new Error(err.message || 'Registration failed')
-    }
+  const register = async ({ name, email, password, role }) => {
+    const response = await api.post('/auth/register', { name, email, password, role })
+    const { user: createdUser, token } = response.data
+    login(createdUser, token)
+    return createdUser
   }
 
   const requestPasswordReset = async (email) => {
-    // Check localStorage for user with this email (offline mode)
-    const emailNorm = String(email || '').trim().toLowerCase()
-    try {
-      const usersJSON = localStorage.getItem('appUsers') || '[]'
-      const users = JSON.parse(usersJSON)
-      const found = users.find(u => u.email && u.email.toLowerCase() === emailNorm)
-      if (found) {
-        // mock behaviour: in production you'd send an email
-        return { success: true }
-      }
-    } catch (err) {
-      console.error('Error checking users:', err)
-    }
-    return { success: false }
+    const response = await api.post('/auth/forgot-password', { email })
+    return response.data
   }
 
   const logout = () => {

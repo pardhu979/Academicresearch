@@ -11,6 +11,8 @@ export default function Register(){
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const [adminCode, setAdminCode] = useState('')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -32,7 +34,9 @@ export default function Register(){
     }
     setLoading(true)
     try{
-      await register({ name: nameTrim, email: emailNorm, password: passwordTrim })
+      // determine role; a real app would verify separately
+      const role = adminCode === 'ADMIN123' ? 'admin' : 'researcher'
+      await register({ name: nameTrim, email: emailNorm, password: passwordTrim, role })
       // register will auto-login and navigate
     }catch(err){
       let errorMsg = 'Registration failed'
@@ -78,6 +82,10 @@ export default function Register(){
             <div className="text-xs mt-1">
               {password ? (isPasswordStrong(password) ? <span className="text-green-600">Looks good</span> : <span className="text-yellow-600">{passwordFeedback(password)}</span>) : <span className="text-gray-500">At least 6 chars and a number</span>}
             </div>
+          </div>
+          <div>
+            <label className="block text-sm mb-1">Admin Code (optional)</label>
+            <input className="w-full border border-gray-200 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-acad-50" value={adminCode} onChange={(e)=>setAdminCode(e.target.value)} placeholder="leave blank for researcher" />
           </div>
           <button className="px-4 py-2 bg-acad-500 text-white rounded inline-flex items-center" disabled={loading || !name.trim() || !validateEmail(email) || !isPasswordStrong(password)}>{loading ? 'Creating...' : 'Create Account'}</button>
         </form>

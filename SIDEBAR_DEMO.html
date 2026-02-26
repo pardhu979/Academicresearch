@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidebar Navigation - Design Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .demo-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 40px;
+      background: #f9fafb;
+      min-height: 100vh;
+    }
+
+    .demo-section {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .demo-title {
+      padding: 20px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      font-weight: 600;
+      font-size: 18px;
+      color: #1f2937;
+    }
+
+    .sidebar-preview {
+      display: flex;
+      height: 600px;
+      background: white;
+    }
+
+    .sidebar {
+      width: 256px;
+      background: #f9fafb;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .nav-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+
+    .nav-items {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 200ms ease;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      text-decoration: none;
+    }
+
+    .nav-item:hover:not(.active) {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .nav-item.active {
+      background: #eff6ff;
+      color: #1e40af;
+    }
+
+    .nav-item .icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: inherit;
+    }
+
+    .nav-item.active .icon {
+      color: #2563eb;
+    }
+
+    .role-section {
+      border-top: 1px solid #e5e7eb;
+      padding-top: 20px;
+    }
+
+    .role-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .radio-label:hover {
+      color: #111827;
+    }
+
+    .radio-label input[type="radio"] {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      accent-color: #3b82f6;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    @media (max-width: 1200px) {
+      .demo-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 20px;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: start;
+      gap: 8px;
+    }
+
+    .feature-list li:before {
+      content: "✓";
+      color: #10b981;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .comparison-table th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .comparison-table td {
+      color: #6b7280;
+    }
+
+    .comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-visible {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-hidden {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .color-swatch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .color-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid #d1d5db;
+    }
+
+    .spacing-demo {
+      padding: 20px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .spacing-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f9fafb;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .spacing-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .spacing-item .label {
+      flex: 1;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .spacing-item .value {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <!-- Researcher View -->
+    <div class="demo-section">
+      <div class="demo-title">👤 Researcher View</div>
+      <div class="sidebar-preview">
+        <div class="sidebar">
+          <div class="nav-title">Navigation</div>
+          <div class="nav-items">
+            <a href="#" class="nav-item active">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-8h14l2 8M5 9v10a1 1 0 001 1h2a1 1 0 001-1V9m4 0v10a1 1 0 001 1h2a1 1 0 001-1V9"></path>
+              </svg>
+              <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Projects</span>
+            </a>
+            <a href="#" class="nav-item">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Documents</span>
+            </a>
+            <a href="#" class="nav-item">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 8h10M7 12h4m1 8l-4-2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 2z"></path>
+              </svg>
+              <span>Messages</span>
+            </a>
+          </div>
+          <div class="role-section">
+            <div class="role-title">Role</div>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="role-researcher" checked>
+                <span>Researcher</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="role-researcher">
+                <span>Admin</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="content-area">Main Content Area</div>
+      </div>
+      
+      <div class="feature-list">
+        <strong style="color: #1f2937;">Key Features:</strong>
+        <li>4 main menu items visible</li>
+        <li>Admin menu item hidden</li>
+        <li>Dashboard active (blue highlight)</li>
+        <li>Researcher role selected</li>
+        <li>Soft blue active state: bg-blue-50</li>
+        <li>Hover effect: bg-gray-100</li>
+        <li>Outline-style icons</li>
+        <li>Rounded corners (8px)</li>
+      </div>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dashboard visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Projects visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Documents visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Messages visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Admin visible</td>
+            <td><span class="badge badge-hidden">Hidden</span></td>
+          </tr>
+          <tr>
+            <td>Researcher selected</td>
+            <td><span class="badge badge-visible">Selected</span></td>
+          </tr>
+          <tr>
+            <td>Admin selected</td>
+            <td><span class="badge badge-hidden">Not Selected</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Admin View -->
+    <div class="demo-section">
+      <div class="demo-title">🛡️ Admin View</div>
+      <div class="sidebar-preview">
+        <div class="sidebar">
+          <div class="nav-title">Navigation</div>
+          <div class="nav-items">
+            <a href="#" class="nav-item active">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-8h14l2 8M5 9v10a1 1 0 001 1h2a1 1 0 001-1V9m4 0v10a1 1 0 001 1h2a1 1 0 001-1V9"></path>
+              </svg>
+              <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Projects</span>
+            </a>
+            <a href="#" class="nav-item">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Documents</span>
+            </a>
+            <a href="#" class="nav-item">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 8h10M7 12h4m1 8l-4-2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 2z"></path>
+              </svg>
+              <span>Messages</span>
+            </a>
+            <a href="#" class="nav-item">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+              <span>Admin</span>
+            </a>
+          </div>
+          <div class="role-section">
+            <div class="role-title">Role</div>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="role-admin">
+                <span>Researcher</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="role-admin" checked>
+                <span>Admin</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="content-area">Main Content Area</div>
+      </div>
+      
+      <div class="feature-list">
+        <strong style="color: #1f2937;">Key Features:</strong>
+        <li>5 menu items visible (Admin added)</li>
+        <li>Admin menu item now visible</li>
+        <li>Dashboard still active (blue highlight)</li>
+        <li>Admin role selected</li>
+        <li>Shield icon for Admin item</li>
+        <li>Same styling as Researcher view</li>
+        <li>Conditional rendering working</li>
+        <li>Seamless transition</li>
+      </div>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dashboard visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Projects visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Documents visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Messages visible</td>
+            <td><span class="badge badge-visible">Visible</span></td>
+          </tr>
+          <tr>
+            <td>Admin visible</td>
+            <td><span class="badge badge-visible">Visible ✨</span></td>
+          </tr>
+          <tr>
+            <td>Researcher selected</td>
+            <td><span class="badge badge-hidden">Not Selected</span></td>
+          </tr>
+          <tr>
+            <td>Admin selected</td>
+            <td><span class="badge badge-visible">Selected ✨</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Full Width Design Specifications -->
+  <div style="background: white; padding: 40px; margin: 40px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+    <h2 style="font-size: 24px; font-weight: 700; color: #1f2937; margin-bottom: 24px;">Design Specifications</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+      <!-- Color Palette -->
+      <div>
+        <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 16px;">Color Palette</h3>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="color-swatch">
+            <div class="color-box" style="background: #f9fafb;"></div>
+            <span><strong>Background:</strong> bg-gray-50</span>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background: #374151;"></div>
+            <span><strong>Text Default:</strong> text-gray-700</span>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background: #6b7280;"></div>
+            <span><strong>Text Secondary:</strong> text-gray-500</span>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background: #eff6ff;"></div>
+            <span><strong>Active BG:</strong> bg-blue-50</span>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background: #1e40af;"></div>
+            <span><strong>Active Text:</strong> text-blue-700</span>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background: #2563eb;"></div>
+            <span><strong>Icon Active:</strong> text-blue-600</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spacing System -->
+      <div>
+        <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 16px;">Spacing System</h3>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="spacing-item">
+            <span class="label">Sidebar Padding</span>
+            <span class="value">p-5 (20px)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Menu Item Padding</span>
+            <span class="value">px-4 py-3</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Icon-Label Gap</span>
+            <span class="value">gap-3 (12px)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Item Gap</span>
+            <span class="value">space-y-1 (4px)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Role Item Gap</span>
+            <span class="value">space-y-3 (12px)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Sidebar Width</span>
+            <span class="value">w-64 (256px)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typography -->
+      <div>
+        <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 16px;">Typography</h3>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="spacing-item">
+            <span class="label">Section Title</span>
+            <span class="value">text-xs (11px)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Title Weight</span>
+            <span class="value">font-semibold (600)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Title Case</span>
+            <span class="value">uppercase</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Menu Label</span>
+            <span class="value">text-sm (14px)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Label Weight</span>
+            <span class="value">font-medium (500)</span>
+          </div>
+          <div class="spacing-item">
+            <span class="label">Font Family</span>
+            <span class="value">Inter, sans-serif</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Design Principles -->
+    <div style="margin-top: 40px; padding: 24px; background: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
+      <h3 style="font-size: 16px; font-weight: 600; color: #1f2937; margin-bottom: 16px;">Design Principles</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; font-size: 14px; color: #4b5563;">
+        <div>
+          <strong style="color: #1f2937;">✓ Minimal & Clean</strong>
+          <p style="margin-top: 6px; line-height: 1.4;">Flat design with no excessive shadows or gradients</p>
+        </div>
+        <div>
+          <strong style="color: #1f2937;">✓ Accessible</strong>
+          <p style="margin-top: 6px; line-height: 1.4;">WCAG 2.1 compliant contrast ratios and focus states</p>
+        </div>
+        <div>
+          <strong style="color: #1f2937;">✓ Responsive</strong>
+          <p style="margin-top: 6px; line-height: 1.4;">Hidden on mobile, visible on md: breakpoint and above</p>
+        </div>
+        <div>
+          <strong style="color: #1f2937;">✓ Smooth Transitions</strong>
+          <p style="margin-top: 6px; line-height: 1.4;">200ms timing for all interactive states</p>
+        </div>
+        <div>
+          <strong style="color: #1f2937;">✓ Soft Highlighting</strong>
+          <p style="margin-top: 6px; line-height: 1.4;">Blue-50 background for active item, not harsh</p>
+        </div>
+        <div>
+          <strong style="color: #1f2937;">✓ Icon-Based</strong>
+          <p style="margin-top: 6px; line-height: 1.4;">Outline-style icons with 1.5px stroke width</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Implementation Info -->
+    <div style="margin-top: 40px; padding: 24px; background: #f0fdf4; border-radius: 8px; border: 1px solid #dcfce7; color: #166534;">
+      <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">ℹ️ Implementation Details</h3>
+      <ul style="margin-left: 20px; line-height: 1.6; font-size: 14px;">
+        <li><strong>Component Location:</strong> src/components/Sidebar.jsx</li>
+        <li><strong>Framework:</strong> React with React Router</li>
+        <li><strong>Styling:</strong> Tailwind CSS v3</li>
+        <li><strong>State Management:</strong> React useState hook</li>
+        <li><strong>Icons:</strong> Inline SVG components (outline style)</li>
+        <li><strong>Conditional Rendering:</strong> Admin item shown when role === 'admin'</li>
+        <li><strong>Routing:</strong> NavLink components for client-side navigation</li>
+        <li><strong>Accessibility:</strong> Semantic HTML, focus states, proper labels</li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>

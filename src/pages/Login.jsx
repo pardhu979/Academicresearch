@@ -1,12 +1,14 @@
 import React, { useContext, useState } from 'react'
 import AuthContext from '../context/AuthContext'
 import { Link } from 'react-router-dom'
+import api from '../services/api'
 import { validateEmail } from '../utils/validation'
 
 export default function Login() {
   const { login } = useContext(AuthContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('researcher') // chosen role tab
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -29,20 +31,21 @@ export default function Login() {
     }
     setLoading(true)
     try{
-      // Get users from localStorage (offline mode)
-      const usersJSON = localStorage.getItem('appUsers') || '[]'
-      const users = JSON.parse(usersJSON)
-      const found = users.find(u => u.email && String(u.email).trim().toLowerCase() === emailNorm)
-      
-      if (found && String(found.password) === passwordTrim) {
-        const token = `mock-token-${found.id}`
-        login({ id: found.id, name: found.name, email: found.email }, token)
+      const res = await api.post('/auth/login', { email: emailNorm, password: passwordTrim })
+      const { user: userData, token } = res.data
+      // ensure user role matches the selected tab
+      if (userData.role !== role) {
+        setError(`You are logging in as a ${userData.role}. Please choose the correct role above.`)
       } else {
-        setError('Invalid email or password')
+        login(userData, token)
       }
     }catch(err){
       console.error('[login] error', err)
-      setError('Login failed')
+      if (err.response && err.response.status === 401) {
+        setError('Invalid email or password')
+      } else {
+        setError('Login failed')
+      }
     }finally{
       setLoading(false)
     }
@@ -52,6 +55,19 @@ export default function Login() {
     <div className="max-w-md mx-auto mt-12">
       <div className="card">
         <h4 className="mb-3 text-lg font-semibold">Login</h4>
+        {/* role selector tabs */}
+        <div className="mb-4 flex space-x-4">
+          <button
+            type="button"
+            className={`px-3 py-1 rounded ${role==='researcher' ? 'bg-acad-500 text-white' : 'bg-gray-200'}`}
+            onClick={()=>setRole('researcher')}
+          >Researcher</button>
+          <button
+            type="button"
+            className={`px-3 py-1 rounded ${role==='admin' ? 'bg-acad-500 text-white' : 'bg-gray-200'}`}
+            onClick={()=>setRole('admin')}
+          >Admin</button>
+        </div>
         {error && <div className="text-red-600 mb-2">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
